@@ -2,6 +2,7 @@ from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Application
 import logging
 import asyncio
+from core.i18n import detect_lang, get_help_text
 
 tel_bots = {}
 commands = [
@@ -18,9 +19,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    help_text = f"Hello, {update.message.from_user.first_name}"
+    lang = detect_lang(update.message.chat_id, getattr(update.message.from_user, "language_code", None))
+    help_text = get_help_text(lang, update.message.from_user.first_name)
     await update.message.reply_text(help_text, disable_web_page_preview=True)
-
 
 async def run(token):
     global tel_bots
